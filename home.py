@@ -73,7 +73,7 @@ def answer_poll():
             (user_id, poll_id, choice))
 
         db.commit()
-    except Error:
+    except Exception:
         pass
 
     return redirect(url_for('poll.show_result'))
