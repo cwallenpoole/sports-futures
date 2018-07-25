@@ -7,11 +7,11 @@ def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
-        HOST='0.0.0.0',
-        SECRET_KEY='dev',
-        DEBUG=True,
-        DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
-    )
+            HOST='0.0.0.0',
+            SECRET_KEY='dev',
+            DEBUG=True,
+            DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
+            )
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -36,6 +36,19 @@ def create_app(test_config=None):
     def hello():
         return 'Hello, World!'
 
+    @app.context_processor
+    def override_url_for():
+        return dict(url_for=dated_url_for)
+
+    def dated_url_for(endpoint, **values):
+        if endpoint == 'static':
+            filename = values.get('filename', None)
+            if filename:
+                file_path = os.path.join(app.root_path,
+                        endpoint, filename)
+                values['q'] = int(os.stat(file_path).st_mtime)
+        from flask import url_for
+        return url_for(endpoint, **values)
 
     return app
 

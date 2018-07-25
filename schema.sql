@@ -15,5 +15,6 @@ CREATE TABLE bet (
   user_id VARCHAR(255) NOT NULL,
   created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   poll_id INTEGER NOT NULL,
-  choice INTEGER NOT NULL
+  choice INTEGER NOT NULL,
+  CONSTRAINT only_one_per UNIQUE (user_id, poll_id)
 );

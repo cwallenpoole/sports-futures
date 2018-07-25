@@ -20,12 +20,15 @@ def get_user_id():
 
 @bp.route('/show', methods=['GET'])
 def show_poll():
-    return render_template('poll/display.html', user_id=get_user_id())
+    return render_template('poll/display.html', user_id=get_user_id(), poll_id=request.args.get('poll_id', ''))
 
-@bp.route('/current')
+@bp.route('/current', methods=('GET',))
 def show_current_poll():
     db = get_db()
-    result = db.execute('SELECT * FROM poll ORDER BY id DESC LIMIT 1').fetchone()
+    if 'poll_id' in  request.args:
+        result = db.execute('SELECT * FROM poll WHERE id=? ORDER BY id DESC LIMIT 1', (request.args['poll_id'],)).fetchone()
+    else:
+        result = db.execute('SELECT * FROM poll ORDER BY id DESC LIMIT 1').fetchone()
     if result:
         return jsonify({
             'id': result['id'],
@@ -42,19 +45,21 @@ def answer_poll():
     db = get_db()
     poll_id = request.form['poll_id']
     user_id = request.form['user_id']
-    choice = request.form['option']
+    choice = int(request.form['option'])
     
     choice = choice or 0
 
+    import logging as logger
+    logger.info(poll_id)
     poll = db.execute('SELECT * FROM poll WHERE id=?', (poll_id,)).fetchone()
-   
+
     if not poll:
         from flask import abort
         return abort(404)
 
     db.execute(
             'INSERT INTO bet (user_id, poll_id, choice) VALUES (?,?,?)',  
-            (user_id, poll_id, choice - 1))
+            (user_id, poll_id, choice))
 
     db.commit()
 
@@ -76,6 +81,7 @@ def overall_data(user_id = None):
     result = {}
     for poll_row in poll_query:
         options = poll_row['options'].split(',')
+        options.insert(0, 'No answer')
 
         poll = {
                 'choices': {opt: 0 for opt in options},
@@ -84,7 +90,6 @@ def overall_data(user_id = None):
                 }
         poll['total_score'] = 0
         poll['options'] = options[:]
-        options.insert(0, 'No answer')
         poll['title'] = poll_row['title']
         result[poll_row['id']] = poll
 
@@ -112,7 +117,7 @@ def overall_data(user_id = None):
         elif user_id:
             del result[poll_row['id']]
         else:
-            poll['choice'] = options[poll_row['correct_value'] + 1]
+            poll['choice'] = options[poll_row['correct_value']]
 
     return jsonify(result)
 

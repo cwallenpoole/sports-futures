@@ -4,11 +4,13 @@
   $(
     function() {
       form = $('#submit-form');
+      id = $('#poll-id').val();
 setInterval(function(){
+      var query = id ?('?poll_id=' + id): '';
       $.get(
-        '/poll/current',
+        '/poll/current' + query,
         function(data) {
-          if(id && data.id !== id || data.expired) {
+          if(id && data.id != id || data.expired) {
             form.submit();
           }
           if(!form.find('.question').length) {
@@ -23,9 +25,7 @@ setInterval(function(){
             $('<h3>' + data.title + '</h3>').insertBefore(
               form
             );
-            form.append(
-              '<input type="hidden" name="poll_id" value="' + id + '" />'
-            );
+            $('#poll-id').val(id);
           }
         }
       );
