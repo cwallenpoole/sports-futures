@@ -13,7 +13,7 @@ bp = Blueprint('poll', __name__, url_prefix='/poll')
 def index():
     if not get_user_id():
         import random
-        redirect(url_for('poll.index', user_id=random.randint(1, 10000000)))
+        return redirect(url_for('poll.index', user_id=random.randint(1, 10000000)))
 
     db = get_db()
     poll_query = db.execute('SELECT * FROM poll WHERE expired != 1 ORDER BY id')
