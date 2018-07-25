@@ -21,6 +21,8 @@ def create_app(test_config=None):
 
     import db
     db.init_app(app)
+    import home
+    app.register_blueprint(home.bp)
 
     # ensure the instance folder exists
     try:
