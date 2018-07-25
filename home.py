@@ -55,7 +55,7 @@ def answer_poll():
     db = get_db()
     poll_id = request.form['poll_id']
     user_id = request.form['user_id']
-    choice = int(request.form['option'])
+    choice = int(request.form.get('option', 0))
     
     choice = choice or 0
 
