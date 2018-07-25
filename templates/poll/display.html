@@ -1,1 +1,7 @@
 {% extends 'base.html' %}
+
+{% block content %}
+<form id="submit-form" action="/poll/answer" method="post">
+  <input type="hidden" id="user-id" name="user_id" value="{{ user_id }}" />
+</form>
+{% endblock %}

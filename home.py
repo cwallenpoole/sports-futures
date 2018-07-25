@@ -10,7 +10,7 @@ bp = Blueprint('poll', __name__, url_prefix='/poll')
 
 @bp.route('/show', methods=['GET'])
 def show_poll():
-    return render_template('poll/display.html')
+    return render_template('poll/display.html', user_id=1234)
 
 @bp.route('/current')
 def show_current_poll():
@@ -27,7 +27,16 @@ def show_current_poll():
 
 @bp.route('/answer', methods=['POST'])
 def answer_poll():
-    pass
+    db = get_db()
+    poll_id = request.form['poll_id']
+    user_id = request.form['user_id']
+    option = request.form['option']
+    poll = db.execute('SELECT * FROM poll WHERE id=?', (poll_id,)).fetchone()
+   
+    if not poll:
+        from flask import abort
+        return abort(404)
+    return redirect(url_for('poll.show_result'))
 
 @bp.route('/result', methods=['GET'])
 def show_result():
