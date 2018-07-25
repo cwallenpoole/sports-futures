@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block scripts %}
+    <script type="text/javascript" src="{{ url_for('static', filename='js/results.js') }}"></script>
+{% endblock %}
+{% block content %}
+<div id="data" data-user-id="{{ user_id }}" /> 
+<a href="{{ url_for('poll.show_poll') }}">Do another poll.</a>
+{% endblock %}
