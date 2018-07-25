@@ -3,8 +3,8 @@
     <script type="text/javascript" src="{{ url_for('static', filename='js/results.js') }}"></script>
 {% endblock %}
 {% block content %}
-<div id="data" data-user-id="{{ user_id }}" /> 
-<div id="your-results" />
-<div id="overall-results" />
-<a href="{{ url_for('poll.show_poll') }}">Do another poll.</a>
+<div id="data" data-user-id="{{ user_id }}" />
+<a href="{{ url_for('poll.index') }}">Do another poll.</a>
+<div id="your-results" ></div>
+<div id="overall-results"></div>
 {% endblock %}

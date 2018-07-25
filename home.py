@@ -11,12 +11,16 @@ bp = Blueprint('poll', __name__, url_prefix='/poll')
 
 @bp.route('/', methods=('GET',))
 def index():
-    if not get_user_id():
+    user_id = get_user_id()
+    if not user_id:
         import random
         return redirect(url_for('poll.set_id', user_id=random.randint(1, 10000000)))
 
     db = get_db()
-    poll_query = db.execute('SELECT * FROM poll WHERE expired != 1 ORDER BY id')
+    user_query = db.execute('SELECT poll_id FROM bet WHERE user_id=? ORDER BY id', (user_id,))
+    poll_qs = 'SELECT * FROM poll WHERE expired != 1 AND NOT id IN ({keys}) ORDER BY id'.format(keys=','.join([str(q['poll_id']) for q in user_query]) + ',-1')
+    poll_query = db.execute(poll_qs)
+
     return render_template('poll/index.html', polls=poll_query)
 
 @bp.route('/set_id', methods=('GET',))
