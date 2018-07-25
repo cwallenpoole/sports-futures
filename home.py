@@ -19,6 +19,7 @@ def show_current_poll():
     if result:
         return jsonify({
             'id': result['id'],
+            'title': result['title'],
             'options': result['options'].split(',')
         })
 
