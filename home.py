@@ -18,7 +18,7 @@ def index():
 
     db = get_db()
     user_query = db.execute('SELECT poll_id FROM bet WHERE user_id=? ORDER BY id', (user_id,))
-    poll_qs = 'SELECT * FROM poll WHERE expired != 1 AND NOT id IN ({keys}) ORDER BY id'.format(keys=','.join([str(q['poll_id']) for q in user_query]) + ',-1')
+    poll_qs = 'SELECT * FROM poll WHERE expired != 1 AND NOT id IN ({keys}) ORDER BY id'.format(keys=','.join([str(q['poll_id']) for q in user_query]) or '-1')
     poll_query = db.execute(poll_qs)
 
     return render_template('poll/index.html', polls=poll_query)
