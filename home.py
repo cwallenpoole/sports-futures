@@ -54,7 +54,7 @@ def answer_poll():
 
     db.execute(
             'INSERT INTO bet (user_id, poll_id, choice) VALUES (?,?,?)',  
-            (user_id, poll_id, choice))
+            (user_id, poll_id, choice - 1))
 
     db.commit()
 
@@ -76,11 +76,16 @@ def overall_data(user_id = None):
     result = {}
     for poll_row in poll_query:
         options = poll_row['options'].split(',')
-        poll = {opt: 0 for opt in options}
-        poll.update({(opt + ' score'): 0 for opt in options})
+
+        poll = {
+                'choices': {opt: 0 for opt in options},
+                'scores': {opt: 0 for opt in options}
+                
+                }
         poll['total_score'] = 0
         poll['options'] = options[:]
         options.insert(0, 'No answer')
+        poll['title'] = poll_row['title']
         result[poll_row['id']] = poll
 
         if user_id:
@@ -91,15 +96,23 @@ def overall_data(user_id = None):
         else:
             user_query = db.execute(
                 'SELECT *, strftime(\'%s\', created) as ct  FROM bet WHERE poll_id=? ORDER BY id', (poll_row['id'],))
+        
+        option_name = None
         for user_row in user_query:
             choice = user_row['choice']
-            option_name = options[choice]
-            poll[option_name] += 1
+            option_name = options[choice] if choice >= 0 else 'none'
+            poll['choices'][option_name] += 1
             if poll_row['correct_value'] == choice:
                 score = calculate_score(poll_row, user_row)
-                poll[option_name + ' score'] += score
+                poll['scores'][option_name] += score
                 poll['total_score'] += score
 
+        if user_id and not option_name is None:
+            poll['choice'] = option_name
+        elif user_id:
+            del result[poll_row['id']]
+        else:
+            poll['choice'] = options[poll_row['correct_value'] + 1]
 
     return jsonify(result)
 

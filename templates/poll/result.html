@@ -4,5 +4,7 @@
 {% endblock %}
 {% block content %}
 <div id="data" data-user-id="{{ user_id }}" /> 
+<div id="your-results" />
+<div id="overall-results" />
 <a href="{{ url_for('poll.show_poll') }}">Do another poll.</a>
 {% endblock %}
