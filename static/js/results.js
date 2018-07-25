@@ -30,10 +30,18 @@ $results.append(
         const header = `<h3>Poll: ${poll.title}</h3>`;
         var numbers = [`<h5>Choice by value</h5>`];
         for(var choice in poll.choices){
+          if(choice == 'No answer') {
+            continue;
+          }
           numbers.push(
             `<div><strong>${choice}</strong>&nbsp;${poll.choices[choice]}</div>`  
           )
         }
+        choice = 'No answer';
+        numbers.push(
+            `<div><strong>${choice}</strong>&nbsp;${poll.choices[choice]}</div>`  
+          )
+
         
         const correctChoice = `<div>The correct choice: ${poll.choice}</div>`;
         const score = `<div>Cumulative Score: ${poll.total_score}</div>`;
