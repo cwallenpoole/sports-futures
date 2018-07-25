@@ -97,6 +97,9 @@ def overall_data(user_id = None):
 
     result = {}
     for poll_row in poll_query:
+        if poll_row['correct_value'] < 0:
+            continue
+
         options = poll_row['options'].split(',')
         options.insert(0, 'No answer')
 
@@ -113,11 +116,11 @@ def overall_data(user_id = None):
         if user_id:
             user_query = db.execute(
                 'SELECT *, strftime(\'%s\', created) as ct  FROM bet '+
-                'WHERE user_id=? AND poll_id=?  AND correct_value >= 0 ORDER BY id', (user_id, poll_row['id'],))
+                'WHERE user_id=? AND poll_id=? ORDER BY id', (user_id, poll_row['id'],))
 
         else:
             user_query = db.execute(
-                'SELECT *, strftime(\'%s\', created) as ct  FROM bet WHERE poll_id=? AND correct_value >= 0 ORDER BY id', (poll_row['id'],))
+                'SELECT *, strftime(\'%s\', created) as ct  FROM bet WHERE poll_id=? ORDER BY id', (poll_row['id'],))
         
         option_name = None
         for user_row in user_query:
