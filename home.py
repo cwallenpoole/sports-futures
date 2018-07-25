@@ -18,7 +18,8 @@ def show_current_poll():
     result = db.execute('SELECT * FROM poll ORDER BY id DESC LIMIT 1').fetchone()
     if result:
         return jsonify({
-            'id': result['id']
+            'id': result['id'],
+            'options': result['options'].split(',')
         })
 
     return jsonify({})

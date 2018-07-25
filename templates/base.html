@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Sports Futures</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/loader.js') }}"></script>
+  </head>
+  <body>
+    <nav>
+      <h1>Predict the future</h1>
+    </nav>
+    <section class="content">
+      <header>
+        {% block header %}{% endblock %}
+      </header>
+      {% for message in get_flashed_messages() %}
+      <div class="flash">{{ message }}</div>
+      {% endfor %}
+      {% block content %}{% endblock %}
+    </section>
+  </body>
+</html>
