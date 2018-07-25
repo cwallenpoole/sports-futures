@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  {% for poll in polls %}
+  <div>
+    <a href="{{ url_for('poll.show_poll', poll_id=poll['id']) }}">
+      {{ poll['title'] }}
+    </a>
+  </div>
+  {% endfor %}
+{% endblock %}

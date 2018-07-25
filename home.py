@@ -9,9 +9,19 @@ from db import get_db
 bp = Blueprint('poll', __name__, url_prefix='/poll')
 
 
-@bp.route('/set_id', methods=('GET',))
+@bp.route('/', methods=('GET',))
 def index():
-    resp = make_response('')
+    if not get_user_id():
+        import random
+        redirect(url_for('poll.index', user_id=random.randint(1, 10000000)))
+
+    db = get_db()
+    poll_query = db.execute('SELECT * FROM poll WHERE expired != 1 ORDER BY id')
+    return render_template('poll/index.html', polls=poll_query)
+
+@bp.route('/set_id', methods=('GET',))
+def set_id():
+    resp = make_response(redirect(url_for('poll.index')))
     resp.set_cookie('user_id', request.args['user_id'])
     return resp
 
@@ -76,7 +86,7 @@ def user_data():
 @bp.route('/result/overall', methods=('GET',))
 def overall_data(user_id = None):
     db = get_db()
-    poll_query = db.execute('SELECT *, strftime(\'%s\', poll_time) as pt FROM poll WHERE expired != 2 ORDER BY id')
+    poll_query = db.execute('SELECT *, strftime(\'%s\', poll_time) as pt FROM poll WHERE expired != 1 ORDER BY id')
 
     result = {}
     for poll_row in poll_query:
