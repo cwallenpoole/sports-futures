@@ -137,5 +137,7 @@ def overall_data(user_id = None):
 BASE_SCORE = 1000
 def calculate_score(poll, choice):
     time_diff = int(choice['ct']) - int(poll['pt'])
+    if time_diff < 300:
+        return BASE_SCORE
     offset = round(time_diff/30)
     return BASE_SCORE // offset
