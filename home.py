@@ -67,11 +67,14 @@ def answer_poll():
         from flask import abort
         return abort(404)
 
-    db.execute(
+    try:
+        db.execute(
             'INSERT INTO bet (user_id, poll_id, choice) VALUES (?,?,?)',  
             (user_id, poll_id, choice))
 
-    db.commit()
+        db.commit()
+    except Error:
+        pass
 
     return redirect(url_for('poll.show_result'))
 
