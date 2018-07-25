@@ -1,7 +1,7 @@
 CREATE TABLE poll (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   options VARCHAR(255) NOT NULL,
-  correct_value INTEGER NOT NULL,
+  correct_value INTEGER NOT NULL
 );
 
 CREATE TABLE bet (
